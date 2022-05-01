@@ -1,0 +1,21 @@
+endroid_qr_code:
+    default:
+        writer: Endroid\QrCode\Writer\PngWriter
+        size: 256
+        margin: 10
+        encoding: 'UTF-8'
+        errorCorrectionLevel: 'high'
+        roundBlockSizeMode: 'margin'
+        validateResult: false
+    gameUrl:
+        writer: Endroid\QrCode\Writer\PngWriter
+        size: 256
+        margin: 5
+        encoding: 'UTF-8'
+        errorCorrectionLevel: 'high'
+        roundBlockSizeMode: 'margin'
+        validateResult: false
+        labelText: 'Wishlist on Steam'
+        labelFontPath: '%kernel.project_dir%/vendor/endroid/qr-code/assets/noto_sans.otf'
+        labelFontSize: 16
+        labelAlignment: 'center'

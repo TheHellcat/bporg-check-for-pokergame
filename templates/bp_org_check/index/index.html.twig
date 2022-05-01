@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+        body
+        {
+        }
+
+        .ltt-image
+        {
+            width: 45%;
+            height: auto;
+            object-fit: contain;
+            margin: 5px;
+            border-radius: 25px;
+        }
+    </style>
+</head>
+<body style="margin: 50px;">
+
+<div>
+
+    <div class="row">
+        <div class="col-md-12">
+            &nbsp;
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Spieler und Donation Übersicht</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            &nbsp;
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <table class="table table-striped" style="font-size: x-large; font-weight: bold;">
+                <thead>
+                <tr style="font-size: large; font-weight: normal;">
+                    <th scope="col">Spieler</th>
+                    <th scope="col">Poker Chips auf der Bank</th>
+                    <th scope="col">= Angerechnete Donations</th>
+                    <th scope="col">Gesamt Donations</th>
+                    <th scope="col">&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for player in playerData %}
+                    <tr>
+                        <td><strong>{{ player.player }}</strong></td>
+                        <td style="text-align: center;">{{ player.playChips | number_format(0, ',', '') }}</td>
+                        <td style="text-align: center;">{{ (player.total_amount / 100) | number_format(2, ',', '') }}</td>
+                        <td style="text-align: center;">{{ (player.total_alltime / 100) | number_format(2, ',', '') }}</td>
+                        <td style="font-size: large; font-weight: normal;">
+                            Chips ausgeben:<br>
+                            <input type="text" id="{{ player.player }}-buy-chips-amount"> <button id="{{ player.player }}-buy-chips" class="btn btn-sm btn-success btn-buy-chips">Ausgeben</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="col-md-6">
+            <div style="margin-top: 100px;"></div>
+            <div style="font-size: larger; font-weight: bold;">&gt;&gt;&gt; mit technischer Unterstützung von</div>
+            <div>
+                <img src="{{ asset('img/sf-logo.png') }}" class="ltt-image">
+            </div>
+            <div>&nbsp;</div>
+            <div>
+                <img src="{{ asset('img/ltt1.jpg') }}" class="ltt-image">
+                <img src="{{ asset('img/ltt2.jpg') }}" class="ltt-image">
+                <img src="{{ asset('img/ltt3.jpg') }}" class="ltt-image">
+                <img src="{{ qr_code_url('https://store.steampowered.com/app/1313290/Let_Them_Trade/', 'gameUrl') }}" class="">
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ asset('js/jquery.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+
+<script type="application/javascript">
+
+    let skipReload = false;
+
+    $(".btn-buy-chips").each(function() {
+        $( this ).on("click", btnBuyChipsClick);
+    });
+
+    function btnBuyChipsClick(e)
+    {
+        e.stopPropagation();
+
+        let amountId = e.target.id + "-amount";
+        let amount = $("#" + amountId).val();
+
+        let xhr = new XMLHttpRequest();
+
+        if (!xhr)
+        {
+            return;
+        }
+
+        xhr.onreadystatechange = btnBuyChipsXhrStateChange;
+        xhr.open('POST', '/bporg/player/' + '{{ eventType }}' + '/' + '{{ eventId }}' + '/' + e.target.id.replace("-buy-chips", "") + '/funds/-' + amount + '/chips');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
+            btnBuyChipsXhrOnLoad(xhr);
+        }
+        xhr.send();
+
+        return false;
+    }
+
+    function btnBuyChipsXhrStateChange()
+    {}
+
+    function btnBuyChipsXhrOnLoad(xhr)
+    {
+        location.reload();
+    }
+
+    function reloadPage()
+    {
+        if( !skipReload )
+        {
+            //location.reload();
+            // just hit F5, lol
+        }
+    }
+
+    setTimeout(reloadPage, 60000);
+
+</script>
+
+</body>
+</html>
